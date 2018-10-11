@@ -90,6 +90,8 @@ Plugin 'tomtom/tlib_vim'
 Plugin 'honza/vim-snippets'
 Plugin 'garbas/vim-snipmate'
 " awesome colorscheme
+Plugin 'cohlin/vim-colorschemes'
+Plugin 'liuchengxu/space-vim-dark'
 Plugin 'tomasr/molokai'
 " Git/mercurial/others diff icons on the side of the file lines
 Plugin 'mhinz/vim-signify'
@@ -172,6 +174,7 @@ let g:vimwiki_autowriteall=1
 
 "=====  plugin YouCompleteMe ====
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'rdnetto/YCM-Generator'
 Plugin 'rhysd/vim-clang-format'
 Plugin  'SirVer/ultisnips'
 
@@ -184,7 +187,17 @@ Plugin 'jiangmiao/auto-pairs'
 " Unite outline
 nnoremap <leader>oo :Unite outline<cr>
 
-"map <silent> <leader>ee :e ~/.vimrc<cr>
+"======= Cocoa.vim =======
+" for object-c
+Plugin 'msanders/cocoa.vim'
+
+"Methods for the current file can be listed and navigated to with 
+"the |:ListMethods| command.
+"
+"A template of methods declared in a header file (.h) can be built
+"in an implementation file (.m) with |:BuildMethods|
+"
+
 
 " ============================================================================
 " Install plugins the first time vim runs
@@ -284,6 +297,7 @@ imap <C-J> <C-X><C-O>
 " Disabled by default because preview makes the window flicker
 set completeopt-=preview
 
+
 " save as sudo
 ca w!! w !sudo tee "%"
 
@@ -301,7 +315,9 @@ nmap ,wr :RecurGrepFast <cword><CR>
 " use 256 colors when possible
 if &term =~? 'mlterm\|xterm\|xterm-256\|screen-256'
 	let &t_Co = 256
+   " colorscheme py-darcula
     colorscheme molokai
+   "colorscheme space-vim-dark
 else
     colorscheme delek
 endif
@@ -378,7 +394,8 @@ let g:vim_debug_disable_mappings = 1
 " map <F7> :Dbg out<CR>
 " map <F8> :Dbg here<CR>
 " map <F9> :Dbg break<CR>
-" map <F10> :Dbg watch<CR> " map <F11> :Dbg down<CR>
+" map <F10> :Dbg watch<CR> 
+" map <F11> :Dbg down<CR>
 " map <F12> :Dbg up<CR>
 
 " CtrlP ------------------------------
@@ -658,6 +675,16 @@ let g:instant_markdown_autostart = 0
 "================================
 "ctags -R
 "cscope -Rbq
+"
+"
+"ctags在子目录下怎么引用根目录tags
+"
+"第一个命令里的分号是必不可少的，这个命令让vim首先在当前目录里寻找tags文件，
+"如果没有找到tags文件，就到父目录中查找，一直向上递归。因为tags文件中记录的
+"路径总是相对于tags文件所在的路径，所以要使用第二个设置项来改变vim的当前目录。
+"
+set tags=tags;
+set autochdir
 
 ""===================================
 " config SrcExpl (Source Explorer) 
@@ -682,13 +709,29 @@ let g:SrcExpl_gobackKey = "<SPACE>"
 " // below listaccording to the command ":buffers!"
 let g:SrcExpl_pluginList = [ 
         \ "__Tagbar__", 
-        \ "NERD_tree_1" 
+        \ "NERD_tree_1", 
+        \ "Source_Explorer"
     \ ] 
+
+" // The color schemes used by Source Explorer. There are five color schemes
+" // supported for now - Red, Cyan, Green, Yellow and Magenta. Source Explorer
+" // will pick up one of them randomly when initialization.
+let g:SrcExpl_colorSchemeList = [
+        \ "Red",
+        \ "Cyan",
+        \ "Green",
+        \ "Yellow",
+        \ "Magenta"
+    \ ]
 
 " // Enable/Disable the local definition searching, and note that this is not 
 " // guaranteed to work, the Source Explorer doesn't check the syntax for now. 
 " // It only searches for a match with the keyword according to command 'gd' 
 let g:SrcExpl_searchLocalDef = 1 
+
+" // Workaround for Vim bug @https://goo.gl/TLPK4K as any plugins using autocmd for
+" // BufReadPre might have conflicts with Source Explorer. e.g. YCM, Syntastic etc.
+let g:SrcExpl_nestedAutoCmd = 1
 
 " // Do not let the Source Explorer update the tags file when opening 
 let g:SrcExpl_isUpdateTags = 0 
@@ -698,7 +741,7 @@ let g:SrcExpl_isUpdateTags = 0
 let g:SrcExpl_updateTagsCmd = "ctags --sort=foldcase -R ." 
 
 " // Set "<F12>" key for updating the tags file artificially 
-let g:SrcExpl_updateTagsKey = "<F12>" 
+let g:SrcExpl_updateTagsKey = "<F8>" 
 
 
 " // Set "<F3>" key for displaying the previous definition in the jump list   
@@ -730,7 +773,7 @@ hi cFunctions gui=NONE cterm=bold  ctermfg=blue
 "在 .vimrc 中添加以下配置：map <c-]> g<c-]>
 map <c-]> g<c-]>
 
-nmap <eader>nh :noh<CR>
+nmap <leader>nh :noh<CR>
 
 
 "ctags for linux system include header files.
@@ -738,3 +781,112 @@ nmap <eader>nh :noh<CR>
 
 "set tags+=/Users/jack/MACDISK02/MacOS_systags/systags
 "
+"
+"==============================================
+" YCM(youcompleteme) 支持代码跳转，跳转到声明和
+" 实现。
+"主要功能是3个YcmCompleter的subcommands:
+"GoToDeclaration
+"GoToDefinition
+"GoToDefinitionElseDeclaration
+"==============================================
+nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+
+
+
+"==============================================
+" add a definition for Objective-C to tagbar
+"==============================================
+"在Xcode工程根目录下运行以下命令创建tags文件
+
+"ctags --exclude='.git' --exclude='*.js' -R .
+
+"Note that when using ctags, .m is treated as Matlab and .h is treated as C++. To override, use:
+
+"$ctags --langmap=ObjectiveC:.m.h  --exclude='.git' --exclude='*.js' -R .
+
+let g:tagbar_type_objc = {
+    \ 'ctagstype' : 'ObjectiveC',
+    \ 'kinds'     : [
+        \ 'i:interface',
+        \ 'I:implementation',
+        \ 'p:Protocol',
+        \ 'm:Object_method',
+        \ 'c:Class_method',
+        \ 'v:Global_variable',
+        \ 'F:Object field',
+        \ 'f:function',
+        \ 'p:property',
+        \ 't:type_alias',
+        \ 's:type_structure',
+        \ 'e:enumeration',
+        \ 'M:preprocessor_macro',
+    \ ],
+    \ 'sro'        : ' ',
+    \ 'kind2scope' : {
+        \ 'i' : 'interface',
+        \ 'I' : 'implementation',
+        \ 'p' : 'Protocol',
+        \ 's' : 'type_structure',
+        \ 'e' : 'enumeration'
+    \ },
+    \ 'scope2kind' : {
+        \ 'interface'      : 'i',
+        \ 'implementation' : 'I',
+        \ 'Protocol'       : 'p',
+        \ 'type_structure' : 's',
+        \ 'enumeration'    : 'e'
+    \ }
+\ }
+
+"==============================================
+" vim autoload cscope.out file
+" Vim中自动加载cscope.out
+"==============================================
+if has("cscope")
+    set csprg=/usr/local/bin/cscope "指定用来执行cscope的命令
+	set csto=0      "0:先搜索cscope数据库,再搜索tags标签文件, 1:反之
+	set cst         "使用:cstag,而不是:tag
+	set csverb      "显示添加数据库成功与否
+    set cspc=3
+	" add any database in current directory
+	if filereadable("cscope.out")
+	    cs add cscope.out
+	" else add database pointed to by environment
+	"elseif $CSCOPE_DB != ""
+	"    cs add $CSCOPE_DB
+    else
+        let cscope_file=findfile("cscope.out", ".;")
+        let cscope_pre=matchstr(cscope_file, ".*/")
+
+        if !empty(cscope_file) && filereadable(cscope_file)
+            exe "cs add" cscope_file cscope_pre
+        endif
+
+	endif
+	"set csverb
+endif
+
+"quick hotkey.
+nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>a :cs find a <C-R>=expand("<cword>")<CR><CR>
+
+
+"0或者s: 查找C语言符号，即查找函数名、宏、枚举值等出现的地方 
+"1或者g: 查找函数、宏、枚举等定义的位置，类似ctags所提供的功能 
+"2或者d: 查找本函数调用的函数 
+"3或者c: 查找调用本函数的函数 
+"4或者t: 查找指定的字符串 
+"6或者e: 查找egrep模式，相当于egrep功能，但查找速度快多了 
+"7或者f: 查找并打开文件，类似vim的find功能 
+"8或者i: 查找#include这个文件的文件（们）
+
+
