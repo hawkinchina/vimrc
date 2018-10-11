@@ -83,12 +83,14 @@ Plugin 'michaeljsmith/vim-indent-object'
 " operators, highlighting, run and ipdb breakpoints)
 Plugin 'klen/python-mode'
 " Better autocompletion
-Plugin 'Shougo/neocomplcache.vim'
+"Plugin 'Shougo/neocomplcache.vim'
+
 " Snippets manager (SnipMate), dependencies, and snippets repo
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
+"Plugin 'MarcWeber/vim-addon-mw-utils'
+"Plugin 'tomtom/tlib_vim'
 Plugin 'honza/vim-snippets'
-Plugin 'garbas/vim-snipmate'
+"Plugin 'garbas/vim-snipmate'
+
 " awesome colorscheme
 Plugin 'cohlin/vim-colorschemes'
 Plugin 'liuchengxu/space-vim-dark'
@@ -177,6 +179,20 @@ Plugin 'Valloric/YouCompleteMe'
 Plugin 'rdnetto/YCM-Generator'
 Plugin 'rhysd/vim-clang-format'
 Plugin  'SirVer/ultisnips'
+
+"==========================
+"use another snipmate
+"==========================
+"Plugin 'SirVer/ultisnips'
+
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<c-t>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+" If you want :UltiSnipsEdit to split your window.
+"let g:UltiSnipsEditSplit="vertical"
+
 
 " outline
 Plugin 'shougo/unite.vim'
@@ -475,47 +491,95 @@ nmap ,o :RopeFindOccurrences<CR>
 
 " NeoComplCache ------------------------------
 
-" most of them not documented because I'm not sure how they work
-" (docs aren't good, had to do a lot of trial and error to make 
-" it play nice)
-
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplcache.
-let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_enable_ignore_case = 1
-" Use smartcase.
-let g:neocomplcache_enable_smart_case = 1
-let g:neocomplcache_enable_auto_select = 1
-
-let g:neocomplcache_enable_fuzzy_completion = 1
-let g:neocomplcache_enable_camel_ase_completion = 1
-let g:neocomplcache_enable_underbar_completion = 1
-let g:neocomplcache_fuzzy_completion_start_length = 1
-let g:neocomplcache_auto_completion_start_length = 1
-let g:neocomplcache_manual_completion_start_length = 1
-" Set minimum syntax keyword length.
-let g:neocomplcache_min_keyword_length = 1
-let g:neocomplcache_min_syntax_length = 1
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
-" complete with workds from any opened file
-let g:neocomplcache_same_filetype_lists = {}
-let g:neocomplcache_same_filetype_lists._ = '_'
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" Define keyword.
-if !exists('g:neocomplcache_keyword_patterns')
-    let g:neocomplcache_keyword_patterns = {}
-endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplcache#undo_completion()
-inoremap <expr><C-l>     neocomplcache#complete_common_string()
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplcache#close_popup()
-inoremap <expr><C-e>  neocomplcache#cancel_popup()
+"\\Note: This option must set it in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
+"\" Disable AutoComplPop.
+"\let g:acp_enableAtStartup = 0
+"\" Use neocomplcache.
+"\let g:neocomplcache_enable_at_startup = 0 
+"\" Use smartcase.
+"\let g:neocomplcache_enable_smart_case = 1
+"\" Set minimum syntax keyword length.
+"\let g:neocomplcache_min_syntax_length = 3
+"\let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+"\
+"\" Enable heavy features.
+"\" Use camel case completion.
+"\"let g:neocomplcache_enable_camel_case_completion = 1
+"\" Use underbar completion.
+"\"let g:neocomplcache_enable_underbar_completion = 1
+"\
+"\" Define dictionary.
+"\let g:neocomplcache_dictionary_filetype_lists = {
+"\    \ 'default' : '',
+"\    \ 'vimshell' : $HOME.'/.vimshell_hist',
+"\    \ 'scheme' : $HOME.'/.gosh_completions'
+"\        \ }
+"\
+"\" Define keyword.
+"\if !exists('g:neocomplcache_keyword_patterns')
+"\    let g:neocomplcache_keyword_patterns = {}
+"\endif
+"\let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+"\
+"\" Plugin key-mappings.
+"\inoremap <expr><C-g>     neocomplcache#undo_completion()
+"\inoremap <expr><C-l>     neocomplcache#complete_common_string()
+"\
+"\" Recommended key-mappings.
+"\" <CR>: close popup and save indent.
+"\inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+"\function! s:my_cr_function()
+"\  return neocomplcache#smart_close_popup() . "\<CR>"
+"\  " For no inserting <CR> key.
+"\  "return pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+"\endfunction
+"\" <TAB>: completion.
+"\"inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+"\" <C-h>, <BS>: close popup and delete backword char.
+"\inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+"\inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+"\inoremap <expr><C-y>  neocomplcache#close_popup()
+"\inoremap <expr><C-e>  neocomplcache#cancel_popup()
+"\" Close popup by <Space>.
+"\"inoremap <expr><Space> pumvisible() ? neocomplcache#close_popup() : "\<Space>"
+"\
+"\" For cursor moving in insert mode(Not recommended)
+"\"inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
+"\"inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
+"\"inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
+"\"inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
+"\" Or set this.
+"\"let g:neocomplcache_enable_cursor_hold_i = 1
+"\" Or set this.
+"\"let g:neocomplcache_enable_insert_char_pre = 1
+"\
+"\" AutoComplPop like behavior.
+"\"let g:neocomplcache_enable_auto_select = 1
+"\
+"\" Shell like behavior(not recommended).
+"\"set completeopt+=longest
+"\"let g:neocomplcache_enable_auto_select = 1
+"\"let g:neocomplcache_disable_auto_complete = 1
+"\"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+"\
+"\" Enable omni completion.
+"\autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+"\autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+"\autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+"\autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+"\autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+"\
+"\" Enable heavy omni completion.
+"\if !exists('g:neocomplcache_force_omni_patterns')
+"\  let g:neocomplcache_force_omni_patterns = {}
+"\endif
+"\let g:neocomplcache_force_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+"\let g:neocomplcache_force_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+"\let g:neocomplcache_force_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+"\
+"\" For perlomni.vim setting.
+"\" https://github.com/c9s/perlomni.vim
+"\let g:neocomplcache_force_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 
 " TabMan ------------------------------
 
@@ -682,6 +746,7 @@ let g:instant_markdown_autostart = 0
 "第一个命令里的分号是必不可少的，这个命令让vim首先在当前目录里寻找tags文件，
 "如果没有找到tags文件，就到父目录中查找，一直向上递归。因为tags文件中记录的
 "路径总是相对于tags文件所在的路径，所以要使用第二个设置项来改变vim的当前目录。
+"
 "
 set tags=tags;
 set autochdir
@@ -888,5 +953,11 @@ nmap <C-\>a :cs find a <C-R>=expand("<cword>")<CR><CR>
 "6或者e: 查找egrep模式，相当于egrep功能，但查找速度快多了 
 "7或者f: 查找并打开文件，类似vim的find功能 
 "8或者i: 查找#include这个文件的文件（们）
+
+"==================================
+" snipMate cannot use <TAB> hotkey,
+"  <TAB> is used by YouCompleteme.
+"=================================
+
 
 
