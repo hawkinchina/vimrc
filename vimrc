@@ -60,15 +60,19 @@ Plugin 'abudden/taghighlight-automirror'
 Plugin 'kien/ctrlp.vim'
 " Extension to ctrlp, for fuzzy command finder
 Plugin 'fisadev/vim-ctrlp-cmdpalette'
+
 " Zen coding
 Plugin 'mattn/emmet-vim'
 " Maybe the best Git integration
 Plugin 'tpope/vim-fugitive'
+
 " Tab list panel
 Plugin 'kien/tabman.vim'
+
 " Airline
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+
 " Consoles as buffers
 Plugin 'rosenfeld/conque-term'
 " Pending tasks list
@@ -79,22 +83,18 @@ Plugin 'tpope/vim-surround'
 Plugin 'Townk/vim-autoclose'
 " Indent text object
 Plugin 'michaeljsmith/vim-indent-object'
+
 " Python mode (indentation, doc, refactor, lints, code checking, motion and
 " operators, highlighting, run and ipdb breakpoints)
 Plugin 'klen/python-mode'
 " Better autocompletion
 "Plugin 'Shougo/neocomplcache.vim'
 
-" Snippets manager (SnipMate), dependencies, and snippets repo
-"Plugin 'MarcWeber/vim-addon-mw-utils'
-"Plugin 'tomtom/tlib_vim'
-Plugin 'honza/vim-snippets'
-"Plugin 'garbas/vim-snipmate'
-
 " awesome colorscheme
 Plugin 'cohlin/vim-colorschemes'
 Plugin 'liuchengxu/space-vim-dark'
 Plugin 'tomasr/molokai'
+
 " Git/mercurial/others diff icons on the side of the file lines
 Plugin 'mhinz/vim-signify'
 " Automatically sort python imports
@@ -103,6 +103,7 @@ Plugin 'fisadev/vim-isort'
 Plugin 'fisadev/dragvisuals.vim'
 " Window chooser
 Plugin 't9md/vim-choosewin'
+
 " Python and other languages code checker
 Plugin 'scrooloose/syntastic'
 " Paint css colors with the real color
@@ -124,6 +125,7 @@ Plugin 'matchit.zip'
 Plugin 'Wombat'
 " Yank history navigation
 Plugin 'YankRing.vim'
+
 " javascript complete after install the plugin, you must cd the install
 " directory and run `npm install`, then add a .tern-project config file
 " the doc at http://ternjs.net/doc/manual.html#vim
@@ -135,6 +137,7 @@ Plugin 'mxw/vim-jsx'
 " Markdown syntastic highlight
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
+
 " Markdown realtime preview
 " Before you want to use it, please run
 " `sudo npm -g install instant-markdown-d`
@@ -143,6 +146,7 @@ Plugin 'suan/vim-instant-markdown'
 Plugin 'mustache/vim-mustache-handlebars'
 " Vue.js syntax and highlighting
 Plugin 'tao12345666333/vim-vue'
+
 """""""" c/c++ jump support 
 "header/source jump
 "c complete.
@@ -174,15 +178,19 @@ nnoremap <leader>do :Dox<cr>
 Plugin 'vimwiki/vimwiki'
 let g:vimwiki_autowriteall=1
 
-"=====  plugin YouCompleteMe ====
+"=====  plugin YouCompleteMe and ultisnips ====
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'rdnetto/YCM-Generator'
 Plugin 'rhysd/vim-clang-format'
 Plugin  'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
 
-"==========================
-"use another snipmate
-"==========================
+"This option is off by default because it makes Vim slower if your tags are on a network directory.
+let g:ycm_collect_identifiers_from_tags_files = 0  
+
+"===============================
+"use another snipmate:ultisnips
+"===============================
 "Plugin 'SirVer/ultisnips'
 
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
@@ -193,8 +201,9 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 " If you want :UltiSnipsEdit to split your window.
 "let g:UltiSnipsEditSplit="vertical"
 
-
-" outline
+"========================
+" outline: for object-c
+"========================
 Plugin 'shougo/unite.vim'
 Plugin 'shougo/unite-outline'
 Plugin 'ryotakato/unite-outline-objc'
@@ -205,6 +214,7 @@ nnoremap <leader>oo :Unite outline<cr>
 
 "======= Cocoa.vim =======
 " for object-c
+"========================
 Plugin 'msanders/cocoa.vim'
 
 "Methods for the current file can be listed and navigated to with 
@@ -383,6 +393,7 @@ map <F4> :TagbarToggle<CR>
 " autofocus on tagbar open
 let g:tagbar_autofocus = 1
 let g:tagbar_ctags_bin='/usr/local/bin/ctags'
+let g:tagbar_width = 20
 
 " NERDTree ----------------------------- 
 
@@ -393,6 +404,8 @@ nmap ,t :NERDTreeFind<CR>
 " don;t show these file types
 let NERDTreeIgnore = ['\.pyc$', '\.pyo$']
 let NERDTreeShowBookmarks=1
+let g:NERDTreeWinSize = 21
+
 
 
 " Tasklist ------------------------------
@@ -582,6 +595,7 @@ nmap ,o :RopeFindOccurrences<CR>
 "\let g:neocomplcache_force_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 
 " TabMan ------------------------------
+"Tab Manager
 
 " mappings to toggle display, and to focus on it
 let g:tabman_toggle = 'tl'
@@ -721,12 +735,12 @@ let g:vim_markdown_frontmatter=1
 " via the command :InstantMarkdownPreview
 let g:instant_markdown_autostart = 0
 
-
+"=========================================
 "fast modify .vimrc,
 ""快速修改，快速加载.vimrc
 ""设置快速编辑.vimrc文件 ,e 编辑.vimrc
 " 快速修改 vimrc 文件
-"
+"=========================================
 "Fast reloading of the .vimrc
  map <silent> <leader>ss :source ~/.vimrc<cr>
 "Fast editing of .vimrc
