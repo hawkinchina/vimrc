@@ -188,6 +188,20 @@ Plugin 'honza/vim-snippets'
 "This option is off by default because it makes Vim slower if your tags are on a network directory.
 let g:ycm_collect_identifiers_from_tags_files = 0  
 
+let g:ycm_auto_trigger=1
+let g:ycm_semantic_triggers = {
+\'c' : ['->', '    ', '.', ' ', '(', '[', '&'],
+\'cpp,objcpp' : ['->', '.', ' ', '(', '[', '&', '::'],
+\'perl' : ['->', '::', ' '],
+\'php' : ['->', '::', '.'],
+\'cs,java,javascript,d,vim,python,perl6,scala,vb,elixir,go' : ['.'],
+\'ruby' : ['.', '::'],
+\'lua' : ['.', ':'],
+\'scss,css': [ 're!^\s{2,4}', 're!:\s+' ],
+\'html': ['<', '"', '</', ' '],
+\'javascript': ['.', 're!(?=[a-zA-Z]{3,4})'],
+\}
+
 "===============================
 "use another snipmate:ultisnips
 "===============================
