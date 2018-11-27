@@ -6,7 +6,10 @@ let mapleader=','
 
 " suport chinese languages
 let &termencoding=&encoding
-set fileencodings=utf-8,gbk,ucs-bom,cp936
+"set fileencodings=utf-8,gbk,ucs-bom,cp936
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+
+
 
 
 " no vi-compatible
@@ -40,6 +43,8 @@ Plugin 'gmarik/vundle'
 " Plugins from github repos:
 
 " Python and PHP Debugger
+" 缩进指示线
+Plugin 'Yggdroot/indentLine'
 Plugin 'fisadev/vim-debug.vim'
 " Better file browser
 Plugin 'scrooloose/nerdtree'
@@ -164,10 +169,14 @@ Plugin 'skywind3000/asyncrun.vim'
 Plugin 'artur-shaik/vim-javacomplete2'
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
-"Comenter
+"======= Doxygen Comenter ============
+"安装好Doxygen后，打开代码文件，即可通过:DoxLic，:DoxAuthor，:Dox
+"添加license说明、作者版本说明和函数说明.
+"====================================
 Plugin 'DoxygenToolkit.vim'
 let g:load_doxygen_syntax=1
 let g:DoxygenToolkit_authorName="Jack he"
+let g:DoxygenToolkit_paramTag_pre="@param [IN/OUT]"
 nnoremap <leader>do :Dox<cr> 
 
 " c++ enhanced-highlight
@@ -187,10 +196,18 @@ Plugin 'honza/vim-snippets'
 
 "This option is off by default because it makes Vim slower if your tags are on a network directory.
 let g:ycm_collect_identifiers_from_tags_files = 0  
+let g:ycm_key_invoke_completion = '<c-z>'
+"let g:ycm_key_list_stop_completion = ['<C-y>']
 
 let g:ycm_auto_trigger=1
+
+"backup...
+"\'c' : ['->', '', '.', ' ', '(', '[', '&','re!\w{2}'],
+
 let g:ycm_semantic_triggers = {
-\'c' : ['->', '    ', '.', ' ', '(', '[', '&'],
+\'c' : ['->', '.', 're!\w{2}'],
+\'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+\          're!\[.*\]\s'],
 \'cpp,objcpp' : ['->', '.', ' ', '(', '[', '&', '::'],
 \'perl' : ['->', '::', ' '],
 \'php' : ['->', '::', '.'],
@@ -201,6 +218,14 @@ let g:ycm_semantic_triggers = {
 \'html': ['<', '"', '</', ' '],
 \'javascript': ['.', 're!(?=[a-zA-Z]{3,4})'],
 \}
+
+"===============================
+" 显示函数原型，参数
+"===============================
+Plugin 'Shougo/echodoc'
+set cmdheight=2
+let g:echodoc_enable_at_startup = 1
+
 
 "===============================
 "use another snipmate:ultisnips
@@ -442,6 +467,8 @@ let g:vim_debug_disable_mappings = 1
 " map <F12> :Dbg up<CR>
 
 " CtrlP ------------------------------
+" ctrlp,Vim的模糊搜索工具，支持文件，缓冲区，MRU（Most Recently Used）文件和标签等的搜索，也支持通过正则表达式搜索（Ctrl-r进行切换），同类软件还有 command-t,fzf等。
+"
 
 " file finder mapping
 let g:ctrlp_map = ',e'
@@ -986,6 +1013,38 @@ nmap <C-\>a :cs find a <C-R>=expand("<cword>")<CR><CR>
 " snipMate cannot use <TAB> hotkey,
 "  <TAB> is used by YouCompleteme.
 "=================================
+
+"================fzf 工具==============
+"插件主要对 fzf 集成绑定了一些和 vim 相关的功能，比如：
+"查找当前 Buffer、Tag、Marks。甚至切换 window,
+"更换 vim 主题配色Colors, Rg查询, Lines, BLines,
+"https://github.com/hawkinchina/fzf.vim
+"
+" If installed using Homebrew
+set rtp+=/usr/local/opt/fzf
+Plugin 'junegunn/fzf.vim'
+
+" set g:fzf_command_prefix to give the same prefix to the commands
+let g:fzf_command_prefix = 'Fzf'
+
+"因为ripgrep是目前性能最好的文本内容搜索工具，所以我们可以自己定义一个命令
+
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
+"======================
+"缩进指示线配置
+"=====================
+let g:indentLine_char='┆'
+let g:indentLine_enabled = 1
+"let g:indentLine_setColors = 0
+"let g:indentLine_color_term = 239
+"映射到ctrl+i键
+"map <C-i> :IndentLinesToggle<CR>
 
 
 
