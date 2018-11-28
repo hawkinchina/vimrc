@@ -9,9 +9,6 @@ let &termencoding=&encoding
 "set fileencodings=utf-8,gbk,ucs-bom,cp936
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 
-
-
-
 " no vi-compatible
 set nocompatible
 set t_Co=256
@@ -157,6 +154,56 @@ Plugin 'tao12345666333/vim-vue'
 "c complete.
 Plugin 'a.vim'
 Plugin 'c.vim'
+
+"==========================================
+"动态检查
+"vim8 支持异步后可以升级实时 linting 工具 ALE
+"暂时关闭代码检查:ALEDisable， 上述配置设置了快捷键 F7,进行切换
+":ALEDetail查看详细描述等；
+"=========================================
+Plugin 'w0rp/ale'
+" 对应语言需要安装相应的检查工具
+" https://github.com/w0rp/ale
+"    let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
+"    let g:ale_linters = {
+"\   'cpp': ['cppcheck','clang','gcc'],
+"\   'c': ['cppcheck','clang', 'gcc'],
+"\   'python': ['pylint'],
+"\   'bash': ['shellcheck'],
+"\   'go': ['golint'],
+"\}
+"
+    let g:ale_linters = {
+\   'cpp': ['cppcheck','clang','gcc'],
+\   'c': ['cppcheck','clang', 'gcc'],
+\}
+
+
+    let g:ale_sign_column_always = 1
+    let g:ale_completion_delay = 500
+    let g:ale_echo_delay = 20
+    let g:ale_lint_delay = 500
+    let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+    let g:ale_lint_on_text_changed = 'normal'
+    let g:ale_lint_on_insert_leave = 1
+    let g:airline#extensions#ale#enabled = 1
+    "let g:ale_set_quickfix = 1
+    "let g:ale_open_list = 1"打开quitfix对话框
+
+    let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+    let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+    let g:ale_c_cppcheck_options = ''
+    let g:ale_cpp_cppcheck_options = ''
+
+    let g:ale_sign_error = ">>"
+    let g:ale_sign_warning = "--"
+   "map <F7> ::ALEToggle<CR>
+
+
+"=======cppman for vim =======
+"Plugin for use of cppman ("C++ 98/11/14 manual pages for Linux/MacOS" ) from within Vim
+"=============================
+Plugin 'gauteh/vim-cppman'
 
 "使用简单，只需要一条命令 :AsyncRun ... 就可以运行后台命令（格式就和老的 !
 "命令一样）
