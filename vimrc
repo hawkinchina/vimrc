@@ -40,6 +40,7 @@ Plugin 'gmarik/vundle'
 " Plugins from github repos:
 
 " Python and PHP Debugger
+
 " 缩进指示线
 Plugin 'Yggdroot/indentLine'
 Plugin 'fisadev/vim-debug.vim'
@@ -57,11 +58,6 @@ Plugin 'wesleyche/SrcExpl'    "类似sourceInsight的代码预览窗口"
 "code in Vim
 Plugin 'abudden/taghighlight-automirror'
 
-
-" Code and files fuzzy finder
-"Plugin 'kien/ctrlp.vim'
-" Extension to ctrlp, for fuzzy command finder
-"Plugin 'fisadev/vim-ctrlp-cmdpalette'
 
 " Zen coding
 Plugin 'mattn/emmet-vim'
@@ -330,30 +326,35 @@ Plugin 'rhysd/vim-clang-format'
 Plugin  'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 
-"This option is off by default because it makes Vim slower if your tags are on a network directory.
-let g:ycm_collect_identifiers_from_tags_files = 0  
+" 开启 YCM 标签补全引擎
+let g:ycm_collect_identifiers_from_tags_files=0
+
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_min_num_identifier_candidate_chars = 2
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_strings=1
 let g:ycm_key_invoke_completion = '<c-z>'
-"let g:ycm_key_list_stop_completion = ['<C-y>']
+set completeopt=menu,menuone  "关闭自动弹出的窗口
 
-let g:ycm_auto_trigger=1
+noremap <c-z> <NOP>
 
-"backup...
-"\'c' : ['->', '', '.', ' ', '(', '[', '&','re!\w{2}'],
+"let g:ycm_semantic_triggers =  {
+"			\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+"			\ 'cs,lua,javascript': ['re!\w{2}'],
+"			\ }
 
-let g:ycm_semantic_triggers = {
-\'c' : ['->', '.', 're!\w{2}'],
-\'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-\          're!\[.*\]\s'],
-\'cpp,objcpp' : ['->', '.', ' ', '(', '[', '&', '::'],
-\'perl' : ['->', '::', ' '],
-\'php' : ['->', '::', '.'],
-\'cs,java,javascript,d,vim,python,perl6,scala,vb,elixir,go' : ['.'],
-\'ruby' : ['.', '::'],
-\'lua' : ['.', ':'],
-\'scss,css': [ 're!^\s{2,4}', 're!:\s+' ],
-\'html': ['<', '"', '</', ' '],
-\'javascript': ['.', 're!(?=[a-zA-Z]{3,4})'],
-\}
+let g:ycm_filetype_whitelist = {
+			\ "c":1,
+			\ "cpp":1,
+			\ "objc":1,
+			\ "sh":1,
+			\ "zsh":1,
+			\ "zimbu":1,
+			\ }
+
+let g:ycm_seed_identifiers_with_syntax=1
 
 "===============================
 " 显示函数原型，参数
