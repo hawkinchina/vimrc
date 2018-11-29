@@ -59,9 +59,9 @@ Plugin 'abudden/taghighlight-automirror'
 
 
 " Code and files fuzzy finder
-Plugin 'kien/ctrlp.vim'
+"Plugin 'kien/ctrlp.vim'
 " Extension to ctrlp, for fuzzy command finder
-Plugin 'fisadev/vim-ctrlp-cmdpalette'
+"Plugin 'fisadev/vim-ctrlp-cmdpalette'
 
 " Zen coding
 Plugin 'mattn/emmet-vim'
@@ -82,7 +82,7 @@ Plugin 'fisadev/FixedTaskList.vim'
 " Surround
 Plugin 'tpope/vim-surround'
 " Autoclose
-Plugin 'Townk/vim-autoclose'
+"Plugin 'Townk/vim-autoclose'
 " Indent text object
 Plugin 'michaeljsmith/vim-indent-object'
 
@@ -101,8 +101,6 @@ Plugin 'tomasr/molokai'
 Plugin 'mhinz/vim-signify'
 " Automatically sort python imports
 Plugin 'fisadev/vim-isort'
-" Drag visual blocks arround
-Plugin 'fisadev/dragvisuals.vim'
 " Window chooser
 Plugin 't9md/vim-choosewin'
 
@@ -155,6 +153,98 @@ Plugin 'tao12345666333/vim-vue'
 Plugin 'a.vim'
 Plugin 'c.vim'
 
+"==================================================
+"  函数列表,文件切换,模糊匹配查询（不使用ctrlp）
+"  Plugin 'Yggdroot/LeaderF'
+"这里定义了:
+"    CTRL+P: 在当前项目目录打开文件搜索，
+"    CTRL+N: 打开 MRU搜索，搜索你最近打开的文件，这两项是我用的最频繁的功能
+"     ALT+P: 打开函数搜索，
+"     ALT+N: 打开Buffer 搜索：
+"==================================================
+Plugin 'Yggdroot/LeaderF'
+
+" Ctrl + p 打开文件搜索, Default value is '<leader>f'.
+let g:Lf_ShortcutF = '<leader>F'   "searching files,   Default value is '<leader>f'.
+let g:Lf_ShortcutB = '<leader>b'   "searching buffers, Default value is '<leader>b'.
+noremap <leader>m :LeaderfMru<cr>      "Most Recently Used (MRU) files.
+noremap <leader>f :LeaderfFunction!<cr>
+noremap <leader>b :LeaderfBuffer<cr>
+noremap <leader>t :LeaderfTag<cr>
+let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
+
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+let g:Lf_WorkingDirectoryMode = 'Ac'
+let g:Lf_WindowHeight = 0.30
+let g:Lf_CacheDirectory = expand('~/.vim/cache')
+let g:Lf_ShowRelativePath = 0
+let g:Lf_HideHelp = 1
+let g:Lf_StlColorscheme = 'powerline'
+let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+
+"======================
+"安装三个插件 : vim-gutentags 索引自动管理 + 索引数据库切换 + 索引预览
+"<leader>cg - 查看光标下符号的定义
+"<leader>cs - 查看光标下符号的引用
+"<leader>cc - 查看有哪些函数调用了该函数
+"<leader>cf - 查找光标下的文件
+"<leader>ci - 查找哪些文件 include 了本文件
+"查找到索引后跳到弹出的 quikfix 窗口，停留在想查看索引行上，
+"按 小P直接打开预览窗口，大P关闭预览，<leader>d 和 <leader>u 向上向下滚动预览窗口。
+"======================
+"自动载入ctags gtags
+if version >= 800
+    Plugin 'ludovicchabant/vim-gutentags'
+    Plugin 'skywind3000/gutentags_plus'
+
+    let $GTAGSLABEL = 'native-pygments'
+    let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
+
+    " gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
+    let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+    " 所生成的数据文件的名称
+    let g:gutentags_ctags_tagfile = '.tags'
+
+    " 同时开启 ctags 和 gtags 支持：
+    let g:gutentags_modules = []
+    if executable('ctags')
+        let g:gutentags_modules += ['ctags']
+    endif
+    if executable('gtags-cscope') && executable('gtags')
+        let g:gutentags_modules += ['gtags_cscope']
+    endif
+
+    " 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+    let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+    " 配置 ctags 的参数
+    let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+    let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+    let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+    " 如果使用 universal ctags 需要增加下面一行
+    let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+
+    " 禁用 gutentags 自动加载 gtags 数据库的行为
+    " 避免多个项目数据库相互干扰
+    " 使用plus插件解决问题
+    let g:gutentags_auto_add_gtags_cscope = 0
+
+   "预览 quickfix 窗口 ctrl-w z 关闭
+    Plugin 'skywind3000/vim-preview'
+    "小p 预览 大p关闭
+    autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+    autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+    noremap <Leader>u :PreviewScroll -1<cr>  "往上滚动预览窗口
+    noremap <leader>d :PreviewScroll +1<cr>  "往下滚动预览窗口
+endif
+
+
+"作者：orientlu
+"链接：https://www.jianshu.com/p/110b27f8361b
+"來源：简书
+
 "==========================================
 "动态检查
 "vim8 支持异步后可以升级实时 linting 工具 ALE
@@ -177,7 +267,6 @@ Plugin 'w0rp/ale'
 \   'cpp': ['cppcheck','clang','gcc'],
 \   'c': ['cppcheck','clang', 'gcc'],
 \}
-
 
     let g:ale_sign_column_always = 1
     let g:ale_completion_delay = 500
@@ -386,20 +475,16 @@ map tp :tabp<CR>
 map tm :tabm 
 map tt :tabnew 
 map ts :tab split<CR>
-map <C-S-Right> :tabn<CR>
-imap <C-S-Right> <ESC>:tabn<CR>
-map <C-S-Left> :tabp<CR>
-imap <C-S-Left> <ESC>:tabp<CR>
 
 " navigate windows with meta+arrows
-map <M-Right> <c-w>l
-map <M-Left> <c-w>h
-map <M-Up> <c-w>k
-map <M-Down> <c-w>j
-imap <M-Right> <ESC><c-w>l
-imap <M-Left> <ESC><c-w>h
-imap <M-Up> <ESC><c-w>k
-imap <M-Down> <ESC><c-w>j
+"map <M-Right> <c-w>l
+"map <M-Left> <c-w>h
+"map <M-Up> <c-w>k
+"map <M-Down> <c-w>j
+"imap <M-Right> <ESC><c-w>l
+"imap <M-Left> <ESC><c-w>h
+"imap <M-Up> <ESC><c-w>k
+"imap <M-Down> <ESC><c-w>j
 
 " old autocomplete keyboard shortcut
 imap <C-J> <C-X><C-O>
@@ -486,11 +571,15 @@ let g:tagbar_width = 20
 " toggle nerdtree display
 map <F3> :NERDTreeToggle<CR>
 " open nerdtree with the current file selected
-nmap ,t :NERDTreeFind<CR>
+"nmap ,t :NERDTreeFind<CR>
 " don;t show these file types
-let NERDTreeIgnore = ['\.pyc$', '\.pyo$']
+let NERDTreeIgnore = ['\.pyc$', '\.pyo$','.swp','\.git']
 let NERDTreeShowBookmarks=1
 let g:NERDTreeWinSize = 21
+
+let NERDTreeShowLineNumbers=0  "是否显示行号
+"let NERDTreeAutoCenter=1
+let NERDTreeShowHidden=0  "是否显示隐藏文件
 
 
 
@@ -512,46 +601,47 @@ let g:vim_debug_disable_mappings = 1
 " map <F10> :Dbg watch<CR> 
 " map <F11> :Dbg down<CR>
 " map <F12> :Dbg up<CR>
+"
 
 " CtrlP ------------------------------
 " ctrlp,Vim的模糊搜索工具，支持文件，缓冲区，MRU（Most Recently Used）文件和标签等的搜索，也支持通过正则表达式搜索（Ctrl-r进行切换），同类软件还有 command-t,fzf等。
 "
 
 " file finder mapping
-let g:ctrlp_map = ',e'
+"let g:ctrlp_map = ',e'
 " hidden some types files
-let g:ctrlp_show_hidden = 1
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.png,*.jpg,*.gif           "Linux
-" tags (symbols) in current file finder mapping
-nmap ,g :CtrlPBufTag<CR>
-" tags (symbols) in all files finder mapping
-nmap ,G :CtrlPBufTagAll<CR>
-" general code finder in all files mapping
-nmap ,f :CtrlPLine<CR>
-" recent files finder mapping
-nmap ,m :CtrlPMRUFiles<CR>
-" commands finder mapping
-nmap ,c :CtrlPCmdPalette<CR>
-" to be able to call CtrlP with default search text
-function! CtrlPWithSearchText(search_text, ctrlp_command_end)
-    execute ':CtrlP' . a:ctrlp_command_end
-    call feedkeys(a:search_text)
-endfunction
-" same as previous mappings, but calling with current word as default text
-nmap ,wg :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
-nmap ,wG :call CtrlPWithSearchText(expand('<cword>'), 'BufTagAll')<CR>
-nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
-nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
-nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
-nmap ,wm :call CtrlPWithSearchText(expand('<cword>'), 'MRUFiles')<CR>
-nmap ,wc :call CtrlPWithSearchText(expand('<cword>'), 'CmdPalette')<CR>
-" don't change working directory
-let g:ctrlp_working_path_mode = 0
-" ignore these files and folders on file finder
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/](\.git|\.hg|\.svn)$',
-  \ 'file': '\.pyc$\|\.pyo$',
-  \ }
+"let g:ctrlp_show_hidden = 1
+"set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.png,*.jpg,*.gif           "Linux
+"" tags (symbols) in current file finder mapping
+"nmap ,g :CtrlPBufTag<CR>
+"" tags (symbols) in all files finder mapping
+"nmap ,G :CtrlPBufTagAll<CR>
+"" general code finder in all files mapping
+"nmap ,f :CtrlPLine<CR>
+"" recent files finder mapping
+"nmap ,m :CtrlPMRUFiles<CR>
+"" commands finder mapping
+"nmap ,c :CtrlPCmdPalette<CR>
+"" to be able to call CtrlP with default search text
+"function! CtrlPWithSearchText(search_text, ctrlp_command_end)
+"    execute ':CtrlP' . a:ctrlp_command_end
+"    call feedkeys(a:search_text)
+"endfunction
+"" same as previous mappings, but calling with current word as default text
+"nmap ,wg :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
+"nmap ,wG :call CtrlPWithSearchText(expand('<cword>'), 'BufTagAll')<CR>
+"nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
+"nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
+"nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
+"nmap ,wm :call CtrlPWithSearchText(expand('<cword>'), 'MRUFiles')<CR>
+"nmap ,wc :call CtrlPWithSearchText(expand('<cword>'), 'CmdPalette')<CR>
+"" don't change working directory
+"let g:ctrlp_working_path_mode = 0
+"" ignore these files and folders on file finder
+"let g:ctrlp_custom_ignore = {
+"  \ 'dir':  '\v[\/](\.git|\.hg|\.svn)$',
+"  \ 'file': '\.pyc$\|\.pyo$',
+"  \ }
 
 " Syntastic ------------------------------
 
@@ -587,100 +677,8 @@ let g:pymode_rope = 0
 " occurrences
 let g:pymode_rope_goto_definition_bind = ',d'
 let g:pymode_rope_goto_definition_cmd = 'e'
-nmap ,D :tab split<CR>:PymodePython rope.goto()<CR>
-nmap ,o :RopeFindOccurrences<CR>
-
-" NeoComplCache ------------------------------
-
-"\\Note: This option must set it in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
-"\" Disable AutoComplPop.
-"\let g:acp_enableAtStartup = 0
-"\" Use neocomplcache.
-"\let g:neocomplcache_enable_at_startup = 0 
-"\" Use smartcase.
-"\let g:neocomplcache_enable_smart_case = 1
-"\" Set minimum syntax keyword length.
-"\let g:neocomplcache_min_syntax_length = 3
-"\let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
-"\
-"\" Enable heavy features.
-"\" Use camel case completion.
-"\"let g:neocomplcache_enable_camel_case_completion = 1
-"\" Use underbar completion.
-"\"let g:neocomplcache_enable_underbar_completion = 1
-"\
-"\" Define dictionary.
-"\let g:neocomplcache_dictionary_filetype_lists = {
-"\    \ 'default' : '',
-"\    \ 'vimshell' : $HOME.'/.vimshell_hist',
-"\    \ 'scheme' : $HOME.'/.gosh_completions'
-"\        \ }
-"\
-"\" Define keyword.
-"\if !exists('g:neocomplcache_keyword_patterns')
-"\    let g:neocomplcache_keyword_patterns = {}
-"\endif
-"\let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-"\
-"\" Plugin key-mappings.
-"\inoremap <expr><C-g>     neocomplcache#undo_completion()
-"\inoremap <expr><C-l>     neocomplcache#complete_common_string()
-"\
-"\" Recommended key-mappings.
-"\" <CR>: close popup and save indent.
-"\inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-"\function! s:my_cr_function()
-"\  return neocomplcache#smart_close_popup() . "\<CR>"
-"\  " For no inserting <CR> key.
-"\  "return pumvisible() ? neocomplcache#close_popup() : "\<CR>"
-"\endfunction
-"\" <TAB>: completion.
-"\"inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-"\" <C-h>, <BS>: close popup and delete backword char.
-"\inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-"\inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-"\inoremap <expr><C-y>  neocomplcache#close_popup()
-"\inoremap <expr><C-e>  neocomplcache#cancel_popup()
-"\" Close popup by <Space>.
-"\"inoremap <expr><Space> pumvisible() ? neocomplcache#close_popup() : "\<Space>"
-"\
-"\" For cursor moving in insert mode(Not recommended)
-"\"inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
-"\"inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
-"\"inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
-"\"inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
-"\" Or set this.
-"\"let g:neocomplcache_enable_cursor_hold_i = 1
-"\" Or set this.
-"\"let g:neocomplcache_enable_insert_char_pre = 1
-"\
-"\" AutoComplPop like behavior.
-"\"let g:neocomplcache_enable_auto_select = 1
-"\
-"\" Shell like behavior(not recommended).
-"\"set completeopt+=longest
-"\"let g:neocomplcache_enable_auto_select = 1
-"\"let g:neocomplcache_disable_auto_complete = 1
-"\"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
-"\
-"\" Enable omni completion.
-"\autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-"\autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-"\autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-"\autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-"\autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-"\
-"\" Enable heavy omni completion.
-"\if !exists('g:neocomplcache_force_omni_patterns')
-"\  let g:neocomplcache_force_omni_patterns = {}
-"\endif
-"\let g:neocomplcache_force_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-"\let g:neocomplcache_force_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-"\let g:neocomplcache_force_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-"\
-"\" For perlomni.vim setting.
-"\" https://github.com/c9s/perlomni.vim
-"\let g:neocomplcache_force_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+"nmap ,D :tab split<CR>:PymodePython rope.goto()<CR>
+"nmap ,o :RopeFindOccurrences<CR>
 
 " TabMan ------------------------------
 "Tab Manager
@@ -690,28 +688,17 @@ let g:tabman_toggle = 'tl'
 let g:tabman_focus  = 'tf'
 
 " Autoclose ------------------------------
-
 " Fix to let ESC work as espected with Autoclose plugin
-let g:AutoClosePumvisible = {"ENTER": "\<C-Y>", "ESC": "\<ESC>"}
-
-" DragVisuals ------------------------------
-
-" mappings to move blocks in 4 directions
-vmap <expr> <S-M-LEFT> DVB_Drag('left')
-vmap <expr> <S-M-RIGHT> DVB_Drag('right')
-vmap <expr> <S-M-DOWN> DVB_Drag('down')
-vmap <expr> <S-M-UP> DVB_Drag('up')
-" mapping to duplicate block
-vmap <expr> D DVB_Duplicate()
+"let g:AutoClosePumvisible = {"ENTER": "", "ESC": ""}
 
 " Signify ------------------------------
 
 " this first setting decides in which order try to guess your current vcs
 " UPDATE it to reflect your preferences, it will speed up opening files
 let g:signify_vcs_list = [ 'git', 'hg' ]
-" mappings to jump to changed blocks
-nmap <leader>sn <plug>(signify-next-hunk)
-nmap <leader>sp <plug>(signify-prev-hunk)
+" mappings to jump to changed blocks:  git next, git pre
+nmap <leader>gn <plug>(signify-next-hunk)
+nmap <leader>gp <plug>(signify-prev-hunk)
 " nicer colors
 highlight DiffAdd           cterm=bold ctermbg=none ctermfg=119
 highlight DiffDelete        cterm=bold ctermbg=none ctermfg=167
@@ -768,8 +755,8 @@ let g:airline_symbols.linenr = ''
 "  nnoremap <C-P> :bp<CR> 
 
 " Tab navigation like Firefox.
-nnoremap <C-S-Tab> :bprevious<CR>
-nnoremap <C-Tab>   :bnext<CR>  
+"nnoremap <C-S-Tab> :bprevious<CR>
+"nnoremap <C-Tab>   :bnext<CR>  
 
 " new file set title and turn to endline
 autocmd BufNewFile *.sh,*.py,*.rb exec ":call SetTitle()"
@@ -850,8 +837,34 @@ let g:instant_markdown_autostart = 0
 "路径总是相对于tags文件所在的路径，所以要使用第二个设置项来改变vim的当前目录。
 "
 "
-set tags=tags;
-set autochdir
+
+"正确设置vimrc，读取tags（当前目录，否则向上级目录查找添加 .tags）
+set tags=./.tags;,.tags
+"set tags=tags;
+"set autochdir
+
+
+"===================================
+" gtags config.
+"===================================
+"vimrc 中设置环境变量启用 pygments
+"let $GTAGSLABEL = 'native-pygments'
+"let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf' " 此路径根据实际设置（find一下）
+
+"==================================
+"安装三个插件 : vim-gutentags 索引自动管理 + 索引数据库切换 + 索引预览
+"==================================
+"定义了一系列快捷键：
+"
+"<leader>cg - 查看光标下符号的定义
+"<leader>cs - 查看光标下符号的引用
+"<leader>cc - 查看有哪些函数调用了该函数
+"<leader>cf - 查找光标下的文件
+"<leader>ci - 查找哪些文件 include 了本文件
+"查找到索引后跳到弹出的 quikfix 窗口，停留在想查看索引行上，
+"按 小P直接打开预览窗口，大P关闭预览，\d 和 \u 向上向下滚动预览窗口。
+
+
 
 ""===================================
 " config SrcExpl (Source Explorer) 
