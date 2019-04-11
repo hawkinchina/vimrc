@@ -84,7 +84,7 @@ Plugin 'michaeljsmith/vim-indent-object'
 
 " Python mode (indentation, doc, refactor, lints, code checking, motion and
 " operators, highlighting, run and ipdb breakpoints)
-Plugin 'klen/python-mode'
+"Plugin 'klen/python-mode'
 " Better autocompletion
 "Plugin 'Shougo/neocomplcache.vim'
 
@@ -149,6 +149,23 @@ Plugin 'tao12345666333/vim-vue'
 Plugin 'a.vim'
 Plugin 'c.vim'
 
+"======================
+Plugin 'davidhalter/jedi-vim'
+
+
+
+"==================================================
+"A Vim cheat sheet that makes sense, inside Vim!
+"快捷命令： <leader>?
+"==================================================
+Plugin 'lifepillar/vim-cheat40'
+
+"=================================================
+" 在 vim 中直接打开一个 bash ，效果如下：
+" :ConqueTermSplit bash
+"=================================================
+"Plugin 'vim-scripts/Conque-Shell'
+
 "==================================================
 "  函数列表,文件切换,模糊匹配查询（不使用ctrlp）
 "  Plugin 'Yggdroot/LeaderF'
@@ -161,9 +178,14 @@ Plugin 'c.vim'
 Plugin 'Yggdroot/LeaderF'
 
 " Ctrl + p 打开文件搜索, Default value is '<leader>f'.
-let g:Lf_ShortcutF = '<leader>F'   "searching files,   Default value is '<leader>f'.
-let g:Lf_ShortcutB = '<leader>b'   "searching buffers, Default value is '<leader>b'.
-noremap <leader>m :LeaderfMru<cr>      "Most Recently Used (MRU) files.
+"searching files,   Default value is '<leader>f'.
+let g:Lf_ShortcutF = '<leader>F'
+
+"searching buffers, Default value is '<leader>b'.
+let g:Lf_ShortcutB = '<leader>b'  
+
+"Most Recently Used (MRU) files.
+noremap <leader>m :LeaderfMru<cr>
 noremap <leader>f :LeaderfFunction!<cr>
 noremap <leader>b :LeaderfBuffer<cr>
 noremap <leader>t :LeaderfTag<cr>
@@ -182,13 +204,14 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 "安装三个插件 : vim-gutentags 索引自动管理 + 索引数据库切换 + 索引预览
 "<leader>cg - 查看光标下符号的定义
 "<leader>cs - 查看光标下符号的引用
-"<leader>cc - 查看有哪些函数调用了该函数
+"<leader>cc - 查看有哪些函数调用(calling)了该函数, 
+"<leader>cd - 查看哪些functions called by  this function
 "<leader>cf - 查找光标下的文件
 "<leader>ci - 查找哪些文件 include 了本文件
 "查找到索引后跳到弹出的 quikfix 窗口，停留在想查看索引行上，
 "按 小P直接打开预览窗口，大P关闭预览，<leader>d 和 <leader>u 向上向下滚动预览窗口。
 "======================
-"自动载入ctags gtags
+"自动载入tags gtags
 if version >= 800
     Plugin 'ludovicchabant/vim-gutentags'
     Plugin 'skywind3000/gutentags_plus'
@@ -226,6 +249,9 @@ if version >= 800
     " 避免多个项目数据库相互干扰
     " 使用plus插件解决问题
     let g:gutentags_auto_add_gtags_cscope = 0
+
+    " change focus to quickfix window after search 搜索结果后,光标聚焦在quickfix
+    let g:gutentags_plus_switch = 1
 
    "预览 quickfix 窗口 ctrl-w z 关闭
     Plugin 'skywind3000/vim-preview'
@@ -293,6 +319,13 @@ Plugin 'gauteh/vim-cppman'
 "使用简单，只需要一条命令 :AsyncRun ... 就可以运行后台命令（格式就和老的 !
 "命令一样）
 Plugin 'skywind3000/asyncrun.vim'
+" set the quickfix window 6 lines height.
+let g:asyncrun_open = 6
+" ring the bell to notify you job finished
+let g:asyncrun_bell = 1
+
+" F10 to toggle quickfix window
+nnoremap <F6> :call asyncrun#quickfix_toggle(6)<cr>
 
 "mini buf explore
 "Plugin 'fholgado/minibufexpl.vim' 
@@ -323,7 +356,7 @@ let g:vimwiki_autowriteall=1
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'rdnetto/YCM-Generator'
 Plugin 'rhysd/vim-clang-format'
-Plugin  'SirVer/ultisnips'
+Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 
 " 开启 YCM 标签补全引擎
@@ -340,10 +373,10 @@ set completeopt=menu,menuone  "关闭自动弹出的窗口
 
 noremap <c-z> <NOP>
 
-"let g:ycm_semantic_triggers =  {
-"			\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-"			\ 'cs,lua,javascript': ['re!\w{2}'],
-"			\ }
+let g:ycm_semantic_triggers =  {
+			\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+			\ 'cs,lua,javascript': ['re!\w{2}'],
+			\ }
 
 let g:ycm_filetype_whitelist = {
 			\ "c":1,
@@ -470,12 +503,12 @@ syntax on
 " show line numbers
 set nu
 
-" tab navigation mappings
-map tn :tabn<CR>
-map tp :tabp<CR>
-map tm :tabm 
-map tt :tabnew 
-map ts :tab split<CR>
+" tab navigation mappings, tabman
+"map tn :tabn<CR>
+"map tp :tabp<CR>
+"map tm :tabm 
+"map tt :tabnew 
+"map ts :tab split<CR>
 
 " navigate windows with meta+arrows
 "map <M-Right> <c-w>l
@@ -665,28 +698,28 @@ let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_style_error_symbol = '✗'
 let g:syntastic_style_warning_symbol = '⚠'
 
-" Python-mode ------------------------------
 
-" don't use linter, we use syntastic for that
-let g:pymode_lint_on_write = 0
-let g:pymode_lint_signs = 0
-" don't fold python code on open
-let g:pymode_folding = 0
-" don't load rope by default. Change to 1 to use rope
-let g:pymode_rope = 0
-" open definitions on same window, and custom mappings for definitions and
-" occurrences
-let g:pymode_rope_goto_definition_bind = ',d'
-let g:pymode_rope_goto_definition_cmd = 'e'
-"nmap ,D :tab split<CR>:PymodePython rope.goto()<CR>
-"nmap ,o :RopeFindOccurrences<CR>
+"/// Python-mode ------------------------------
+"//
+"//" don't use linter, we use syntastic for that
+"//let g:pymode_lint_on_write = 0
+"//let g:pymode_lint_signs = 0
+"//" don't fold python code on open
+"//let g:pymode_folding = 0
+"//" don't load rope by default. Change to 1 to use rope
+"//let g:pymode_rope = 0
+"//" open definitions on same window, and custom mappings for definitions and
+"//" occurrences
+"//let g:pymode_rope_goto_definition_bind = ',d'
+"//let g:pymode_rope_goto_definition_cmd = 'e'
+"//"nmap ,D :tab split<CR>:PymodePython rope.goto()<CR>
+"//"nmap ,o :RopeFindOccurrences<CR>
 
 " TabMan ------------------------------
 "Tab Manager
-
 " mappings to toggle display, and to focus on it
-let g:tabman_toggle = 'tl'
-let g:tabman_focus  = 'tf'
+"let g:tabman_toggle = 'tl'
+"let g:tabman_focus  = 'tf'
 
 " Autoclose ------------------------------
 " Fix to let ESC work as espected with Autoclose plugin
@@ -1098,14 +1131,14 @@ command! -bang -nargs=* Rg
   \   <bang>0)
 
 "======================
-"缩进指示线配置
+"缩进指示线配置(代码编辑)
 "=====================
 let g:indentLine_char='┆'
 let g:indentLine_enabled = 1
 "let g:indentLine_setColors = 0
 "let g:indentLine_color_term = 239
 "映射到ctrl+i键
-"map <C-i> :IndentLinesToggle<CR>
+map <C-i> :IndentLinesToggle<CR>
 
 
 
