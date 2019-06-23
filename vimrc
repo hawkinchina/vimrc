@@ -147,7 +147,9 @@ Plugin 'tao12345666333/vim-vue'
 "header/source jump
 "c complete.
 Plugin 'a.vim'
-Plugin 'c.vim'
+Plugin 'c.vim' 
+Plugin 'vim-scripts/gtags.vim'
+
 
 "======================
 Plugin 'davidhalter/jedi-vim'
@@ -170,18 +172,24 @@ Plugin 'lifepillar/vim-cheat40'
 "  函数列表,文件切换,模糊匹配查询（不使用ctrlp）
 "  Plugin 'Yggdroot/LeaderF'
 "这里定义了:
-"    CTRL+P: 在当前项目目录打开文件搜索，
+"    CTRL+P: 在当前项目目录打开文件搜索，====>修改为<leader>F. 
 "    CTRL+N: 打开 MRU搜索，搜索你最近打开的文件，这两项是我用的最频繁的功能
 "     ALT+P: 打开函数搜索，
 "     ALT+N: 打开Buffer 搜索：
+"
+"   <C-R>:	switch between fuzzy search mode and regex mode
+"   <C-F>:	switch between full path search mode and name only search mode
+"   <C-J>:	move the cursor downward in the result window
+"   <C-K>:	move the cursor upward in the result window
+"
 "==================================================
 Plugin 'Yggdroot/LeaderF'
 
-" Ctrl + p 打开文件搜索, Default value is '<leader>f'.
+" Ctrl + p 打开文件搜索==>修改为<leader>F , Default value is '<leader>f'.
 "searching files,   Default value is '<leader>f'.
 let g:Lf_ShortcutF = '<leader>F'
 
-"searching buffers, Default value is '<leader>b'.
+"searching buffers, Default value is '<leader>b'.g
 let g:Lf_ShortcutB = '<leader>b'  
 
 "Most Recently Used (MRU) files.
@@ -189,6 +197,32 @@ noremap <leader>m :LeaderfMru<cr>
 noremap <leader>f :LeaderfFunction!<cr>
 noremap <leader>b :LeaderfBuffer<cr>
 noremap <leader>t :LeaderfTag<cr>
+
+
+"""""""""""""""
+"Leaderf rg
+"
+" 原始的github的热键：<C-F>, <C-B>和vim的热键冲突
+"
+"""""""""""""""
+" search word under cursor, the pattern is treated as regex, and enter normal mode directly
+noremap gr :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+
+" search word under cursor, the pattern is treated as regex,
+" append the result to previous search results.
+noremap <C-G> :<C-U><C-R>=printf("Leaderf! rg --append -e %s ", expand("<cword>"))<CR>
+
+" search word under cursor literally only in current buffer
+noremap gb :<C-U><C-R>=printf("Leaderf! rg -F --current-buffer -e %s ", expand("<cword>"))<CR>
+
+" search visually selected text literally, don't quit LeaderF after accepting an entry
+xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F --stayOpen -e %s ", leaderf#Rg#visual())<CR>
+
+" recall last search. If the result window is closed, reopen it.
+noremap go :<C-U>Leaderf! rg --stayOpen --recall<CR>
+
+
+
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
 let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
@@ -209,7 +243,7 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 "<leader>cf - 查找光标下的文件
 "<leader>ci - 查找哪些文件 include 了本文件
 "查找到索引后跳到弹出的 quikfix 窗口，停留在想查看索引行上，
-"按 小P直接打开预览窗口，大P关闭预览，<leader>d 和 <leader>u 向上向下滚动预览窗口。
+"按 小p直接打开预览窗口，大P关闭预览，<leader>d 和 <leader>u 向上向下滚动预览窗口。
 "======================
 "自动载入tags gtags
 if version >= 800
@@ -217,6 +251,7 @@ if version >= 800
     Plugin 'skywind3000/gutentags_plus'
 
     let $GTAGSLABEL = 'native-pygments'
+ 
     let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
 
     " gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
@@ -226,21 +261,24 @@ if version >= 800
     let g:gutentags_ctags_tagfile = '.tags'
 
     " 同时开启 ctags 和 gtags 支持：
-    let g:gutentags_modules = []
-    if executable('ctags')
-        let g:gutentags_modules += ['ctags']
-    endif
-    if executable('gtags-cscope') && executable('gtags')
-        let g:gutentags_modules += ['gtags_cscope']
-    endif
+"    let g:gutentags_modules = []
+"    if executable('ctags')
+"        let g:gutentags_modules += ['ctags']
+"    endif
+"    if executable('gtags-cscope') && executable('gtags')
+"        let g:gutentags_modules += ['gtags_cscope']
+"    endif
+
+    " enable gtags module
+    let g:gutentags_modules = ['ctags', 'gtags_cscope']
 
     " 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
     let g:gutentags_cache_dir = expand('~/.cache/tags')
 
     " 配置 ctags 的参数
-    let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-    let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-    let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+    let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extras=+q']
+    let g:gutentags_ctags_extra_args += ['--c++-kinds=+lpxzLANU']
+    let g:gutentags_ctags_extra_args += ['--c-kinds=+lpxzL']
 
     " 如果使用 universal ctags 需要增加下面一行
     let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
@@ -249,6 +287,9 @@ if version >= 800
     " 避免多个项目数据库相互干扰
     " 使用plus插件解决问题
     let g:gutentags_auto_add_gtags_cscope = 0
+
+    "第一步：判断 gtags 为何失败，需进一步打开日志，查看 gtags 的错误输出：
+    let g:gutentags_define_advanced_commands = 1
 
     " change focus to quickfix window after search 搜索结果后,光标聚焦在quickfix
     let g:gutentags_plus_switch = 1
@@ -385,9 +426,14 @@ let g:ycm_filetype_whitelist = {
 			\ "sh":1,
 			\ "zsh":1,
 			\ "zimbu":1,
+            \ "python":1,
 			\ }
 
 let g:ycm_seed_identifiers_with_syntax=1
+
+let g:ycm_server_python_interpreter='/usr/bin/python'
+"let g:ycm_server_python_interpreter='/Users/jack/.pyenv/shims/python'
+let g:ycm_global_ycm_extra_conf='~/.vim/.ycm_extra_conf.py'
 
 "===============================
 " 显示函数原型，参数
@@ -820,12 +866,35 @@ function! SetTitle()
 endfunction
 autocmd BufNewFile * normal G
 
+"--------------------------
+"Quick Run
+"C，C++ 按F10,保存w,编译运行
+"--------------------------
+map <F10> :call CompileRunGcc()<CR>
+func! CompileRunGcc()
+    exec "w"
+    if &filetype == 'c'
+        exec "!gcc % -o %<"
+        exec "! ./%<"
+    elseif &filetype == 'cpp'
+        exec "!g++ % -o %<"
+        exec "! ./%<"
+    elseif &filetype == 'java'
+        exec "!javac %"
+        exec "!java %<"
+    elseif &filetype == 'sh'
+        :!./%
+    elseif &filetype == 'python'
+        exec "!time python2 %"
+    endif
+endfunc
+
 " Vim-jsx ------------------------------
 
 " if you use JSX syntax in .js file, please enable it.
 let g:jsx_ext_required = 0
 
-" Vim-markdown ------------------------------
+" Vim-markdown -------------------------------
 
 " Disabled automatically folding
 let g:vim_markdown_folding_disabled=1
@@ -1056,31 +1125,31 @@ let g:tagbar_type_objc = {
 
 "==============================================
 " vim autoload cscope.out file
-" Vim中自动加载cscope.out
+" Vim中自动加载cscope.out ===> use Gtags, donot use this..
 "==============================================
-if has("cscope")
-    set csprg=/usr/local/bin/cscope "指定用来执行cscope的命令
-	set csto=0      "0:先搜索cscope数据库,再搜索tags标签文件, 1:反之
-	set cst         "使用:cstag,而不是:tag
-	set csverb      "显示添加数据库成功与否
-    set cspc=3
-	" add any database in current directory
-	if filereadable("cscope.out")
-	    cs add cscope.out
-	" else add database pointed to by environment
-	"elseif $CSCOPE_DB != ""
-	"    cs add $CSCOPE_DB
-    else
-        let cscope_file=findfile("cscope.out", ".;")
-        let cscope_pre=matchstr(cscope_file, ".*/")
-
-        if !empty(cscope_file) && filereadable(cscope_file)
-            exe "cs add" cscope_file cscope_pre
-        endif
-
-	endif
-	"set csverb
-endif
+"if has("cscope")
+"    set csprg=/usr/local/bin/cscope "指定用来执行cscope的命令
+"	set csto=0      "0:先搜索cscope数据库,再搜索tags标签文件, 1:反之
+"	set cst         "使用:cstag,而不是:tag
+"	set csverb      "显示添加数据库成功与否
+"    set cspc=3
+"	" add any database in current directory
+"	if filereadable("cscope.out")
+"	    cs add cscope.out
+"	" else add database pointed to by environment
+"	"elseif $CSCOPE_DB != ""
+"	"    cs add $CSCOPE_DB
+"    else
+"        let cscope_file=findfile("cscope.out", ".;")
+"        let cscope_pre=matchstr(cscope_file, ".*/")
+"
+"        if !empty(cscope_file) && filereadable(cscope_file)
+"            exe "cs add" cscope_file cscope_pre
+"        endif
+"
+"	endif
+"	"set csverb
+"endif
 
 "quick hotkey.
 nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -1141,4 +1210,11 @@ let g:indentLine_enabled = 1
 map <C-i> :IndentLinesToggle<CR>
 
 
+"问题：
+"使用mac自带的vim无法使用"+y和"+p复制粘贴文本。
+
+"解决办法：
+"在.vimrc中添加如下两条语句
+"vmap "+y :w !pbcopy<CR><CR>
+"nmap "+p :r !pbpaste<CR><CR>
 
