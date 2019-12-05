@@ -11,6 +11,8 @@ set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 
 " no vi-compatible
 set nocompatible
+"fix:vim 退格键（backspace）不能用,
+set backspace=indent,eol,start
 set t_Co=256
 syntax on
 
@@ -18,7 +20,7 @@ syntax on
 let iCanHazVundle=1
 let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
 if !filereadable(vundle_readme)
-    echo "Installing Vundle..."
+    echo "Installing Vundle...
     echo ""
     silent !mkdir -p ~/.vim/bundle
     silent !git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/vundle
@@ -91,6 +93,7 @@ Plugin 'michaeljsmith/vim-indent-object'
 " awesome colorscheme
 Plugin 'cohlin/vim-colorschemes'
 Plugin 'liuchengxu/space-vim-dark'
+Plugin 'liuchengxu/space-vim-theme'
 Plugin 'tomasr/molokai'
 
 " Git/mercurial/others diff icons on the side of the file lines
@@ -102,6 +105,7 @@ Plugin 't9md/vim-choosewin'
 
 " Python and other languages code checker
 Plugin 'scrooloose/syntastic'
+
 " Paint css colors with the real color
 Plugin 'lilydjwg/colorizer'
 " Relative numbering of lines (0 is the current line)
@@ -130,6 +134,7 @@ Plugin 'marijnh/tern_for_vim'
 Plugin 'fatih/vim-go'
 " JSX syntax highlight.
 Plugin 'mxw/vim-jsx'
+
 " Markdown syntastic highlight
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
@@ -145,9 +150,24 @@ Plugin 'tao12345666333/vim-vue'
 
 """""""" c/c++ jump support 
 "header/source jump
+"A few of quick commands to swtich between source files and header files quickly.
+":A switches to the header file corresponding to the current file being edited (or vise versa)
+":AS splits and switches
+":AV vertical splits and switches
+":AT new tab and switches
+":AN cycles through matches
+":IH switches to file under cursor
+":IHS splits and switches
+":IHV vertical splits and switches
+":IHT new tab and switches
+":IHN cycles through matches
+"<Leader>ih switches to file under cursor
+"<Leader>is switches to the alternate file of file under cursor (e.g. on  <foo.h> switches to foo.cpp)
+"<Leader>ihn cycles through matches
+"
 "c complete.
 Plugin 'a.vim'
-Plugin 'c.vim' 
+Plugin 'c.vim'
 Plugin 'vim-scripts/gtags.vim'
 
 
@@ -169,6 +189,7 @@ Plugin 'lifepillar/vim-cheat40'
 "Plugin 'vim-scripts/Conque-Shell'
 
 "==================================================
+" @LeaderF
 "  函数列表,文件切换,模糊匹配查询（不使用ctrlp）
 "  Plugin 'Yggdroot/LeaderF'
 "这里定义了:
@@ -189,20 +210,22 @@ Plugin 'Yggdroot/LeaderF'
 "searching files,   Default value is '<leader>f'.
 let g:Lf_ShortcutF = '<leader>F'
 
-"searching buffers, Default value is '<leader>b'.g
+"searching buffers, Default value is '<leader>b'.
 let g:Lf_ShortcutB = '<leader>b'  
 
 "Most Recently Used (MRU) files.
 noremap <leader>m :LeaderfMru<cr>
 noremap <leader>f :LeaderfFunction!<cr>
 noremap <leader>b :LeaderfBuffer<cr>
-noremap <leader>t :LeaderfTag<cr>
-
+noremap <leader>T :LeaderfTag<cr>
+noremap <leader>t :LeaderfBufTag<cr>
+noremap <leader>l :LeaderfLine<cr>
 
 """""""""""""""
 "Leaderf rg
 "
 " 原始的github的热键：<C-F>, <C-B>和vim的热键冲突
+" 建议： 后续查询命令g字母开头
 "
 """""""""""""""
 " search word under cursor, the pattern is treated as regex, and enter normal mode directly
@@ -216,7 +239,7 @@ noremap <C-G> :<C-U><C-R>=printf("Leaderf! rg --append -e %s ", expand("<cword>"
 noremap gb :<C-U><C-R>=printf("Leaderf! rg -F --current-buffer -e %s ", expand("<cword>"))<CR>
 
 " search visually selected text literally, don't quit LeaderF after accepting an entry
-xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F --stayOpen -e %s ", leaderf#Rg#visual())<CR>
+noremap gf :<C-U><C-R>=printf("Leaderf! rg -F --stayOpen -e %s ", leaderf#Rg#visual())<CR>
 
 " recall last search. If the result window is closed, reopen it.
 noremap go :<C-U>Leaderf! rg --stayOpen --recall<CR>
@@ -232,26 +255,61 @@ let g:Lf_CacheDirectory = expand('~/.vim/cache')
 let g:Lf_ShowRelativePath = 0
 let g:Lf_HideHelp = 1
 let g:Lf_StlColorscheme = 'powerline'
-let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+let g:Lf_PreviewResult = {
+            \ 'File': 0,
+            \ 'Buffer': 0,
+            \ 'Mru': 0,
+            \ 'Tag': 0,
+            \ 'BufTag': 1,
+            \ 'Function': 1,
+            \ 'Line': 0,
+            \ 'Colorscheme': 0,
+            \ 'Rg': 0,
+            \ 'Gtags': 0
+            \}
 
-"======================
-"安装三个插件 : vim-gutentags 索引自动管理 + 索引数据库切换 + 索引预览
+"==================================================
+"   @vim-gutentags, gutentags_plus, vim-preview
+"   老的cscope, 不要再使用了会影响， 
+"==================================================
+
+"安装三个插件 : 解决了：按需自动索引，数据库自动连接以及结果快速预览等以往使用 gtags 的痛点问题，
+"1):vim-gutentags 索引自动管理 + 索引数据库切换 + 索引预览
 "<leader>cg - 查看光标下符号的定义
 "<leader>cs - 查看光标下符号的引用
 "<leader>cc - 查看有哪些函数调用(calling)了该函数, 
 "<leader>cd - 查看哪些functions called by  this function
 "<leader>cf - 查找光标下的文件
 "<leader>ci - 查找哪些文件 include 了本文件
-"查找到索引后跳到弹出的 quikfix 窗口，停留在想查看索引行上，
-"按 小p直接打开预览窗口，大P关闭预览，<leader>d 和 <leader>u 向上向下滚动预览窗口。
-"======================
+"
+"<leader>cs	Find symbol (reference) under cursor
+"<leader>cg	Find symbol definition under cursor
+"<leader>cd	Functions called by this function
+"<leader>cc	Functions calling this function
+"<leader>ct	Find text string under cursor
+"<leader>ce	Find egrep pattern under cursor
+"<leader>cf	Find file name under cursor
+"<leader>ci	Find files #including the file name under cursor
+"<leader>ca	Find places where current symbol is assigned;符号被赋值count = 
+"
+""查找到索引后跳到弹出的 quikfix 窗口，停留在想查看索引行上，
+"按 小P直接打开预览窗口，大P关闭预览，<leader>d 和 <leader>u 向上向下滚动预览窗口。
+"
+"
+"2):gutentags_plus: 功能connecting gtags_cscope db on demand，切换索引数据库:
+"   老的cscope, 不要再使用了会影响， 
+"
+"3):可使用 vim-preview 插件: 高效的在 quickfix 中先快速预览所有结果，再有针对性的打开必要文件
+"=================================================
 "自动载入tags gtags
+"
 if version >= 800
     Plugin 'ludovicchabant/vim-gutentags'
     Plugin 'skywind3000/gutentags_plus'
 
     let $GTAGSLABEL = 'native-pygments'
- 
+    "let $GTAGSLABEL = 'native'
+
     let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
 
     " gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
@@ -259,8 +317,8 @@ if version >= 800
 
     " 所生成的数据文件的名称
     let g:gutentags_ctags_tagfile = '.tags'
-
-    " 同时开启 ctags 和 gtags 支持：
+"
+"    " 同时开启 ctags 和 gtags 支持：
 "    let g:gutentags_modules = []
 "    if executable('ctags')
 "        let g:gutentags_modules += ['ctags']
@@ -268,9 +326,12 @@ if version >= 800
 "    if executable('gtags-cscope') && executable('gtags')
 "        let g:gutentags_modules += ['gtags_cscope']
 "    endif
-
+"
     " enable gtags module
-    let g:gutentags_modules = ['ctags', 'gtags_cscope']
+"    let g:gutentags_modules = ['ctags', 'gtags_cscope']
+    let g:gutentags_modules = ['gtags_cscope']
+
+
 
     " 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
     let g:gutentags_cache_dir = expand('~/.cache/tags')
@@ -288,7 +349,7 @@ if version >= 800
     " 使用plus插件解决问题
     let g:gutentags_auto_add_gtags_cscope = 0
 
-    "第一步：判断 gtags 为何失败，需进一步打开日志，查看 gtags 的错误输出：
+    "判断 gtags 为何失败，需进一步打开日志，查看 gtags 的错误输出：
     let g:gutentags_define_advanced_commands = 1
 
     " change focus to quickfix window after search 搜索结果后,光标聚焦在quickfix
@@ -299,7 +360,7 @@ if version >= 800
     "小p 预览 大p关闭
     autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
     autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
-    noremap <Leader>u :PreviewScroll -1<cr>  "往上滚动预览窗口
+    noremap <leader>u :PreviewScroll -1<cr>  "往上滚动预览窗口
     noremap <leader>d :PreviewScroll +1<cr>  "往下滚动预览窗口
 endif
 
@@ -309,7 +370,7 @@ endif
 "來源：简书
 
 "==========================================
-"动态检查
+"@ALE: 动态检查
 "vim8 支持异步后可以升级实时 linting 工具 ALE
 "暂时关闭代码检查:ALEDisable， 上述配置设置了快捷键 F7,进行切换
 ":ALEDetail查看详细描述等；
@@ -336,11 +397,18 @@ Plugin 'w0rp/ale'
     let g:ale_echo_delay = 20
     let g:ale_lint_delay = 500
     let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+
+    "显示Linter名称,出错或警告等相关信息
+   " let g:ale_echo_msg_error_str = 'E'
+   " let g:ale_echo_msg_warning_str = 'W'
+   " let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+
     let g:ale_lint_on_text_changed = 'normal'
     let g:ale_lint_on_insert_leave = 1
     let g:airline#extensions#ale#enabled = 1
     "let g:ale_set_quickfix = 1
-    "let g:ale_open_list = 1"打开quitfix对话框
+    "let g:ale_open_list = 1 "打开quitfix对话框
 
     let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
     let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
@@ -352,8 +420,17 @@ Plugin 'w0rp/ale'
    "map <F7> ::ALEToggle<CR>
 
 
+"ALE普通模式下，ak 前往上一个错误或警告，aj 前往下一个错误或警告                                                                                                                                                    
+nmap ak <Plug>(ale_previous_wrap)
+nmap aj <Plug>(ale_next_wrap)
+" ad 查看错误或警告的详细信息
+nmap ad :ALEDetail<CR>
+nmap at :ALEToggle<CR>
+
+
 "=======cppman for vim =======
 "Plugin for use of cppman ("C++ 98/11/14 manual pages for Linux/MacOS" ) from within Vim
+"Move the cursor to the keyword and hit K to lookup the keyword in a new buffer.
 "=============================
 Plugin 'gauteh/vim-cppman'
 
@@ -365,7 +442,8 @@ let g:asyncrun_open = 6
 " ring the bell to notify you job finished
 let g:asyncrun_bell = 1
 
-" F10 to toggle quickfix window
+" F6 to toggle quickfix window
+" 设置 <F6>打开/关闭 Quickfix 窗口
 nnoremap <F6> :call asyncrun#quickfix_toggle(6)<cr>
 
 "mini buf explore
@@ -375,7 +453,7 @@ nnoremap <F6> :call asyncrun#quickfix_toggle(6)<cr>
 Plugin 'artur-shaik/vim-javacomplete2'
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
-"======= Doxygen Comenter ============
+"======= @Doxygen Comenter ============
 "安装好Doxygen后，打开代码文件，即可通过:DoxLic，:DoxAuthor，:Dox
 "添加license说明、作者版本说明和函数说明.
 "====================================
@@ -383,7 +461,7 @@ Plugin 'DoxygenToolkit.vim'
 let g:load_doxygen_syntax=1
 let g:DoxygenToolkit_authorName="Jack he"
 let g:DoxygenToolkit_paramTag_pre="@param [IN/OUT]"
-nnoremap <leader>do :Dox<cr> 
+nnoremap <leader>dox :Dox<cr> 
 
 " c++ enhanced-highlight
 "Plugin 'octol/vim-cpp-enhanced-highlight'
@@ -393,12 +471,28 @@ nnoremap <leader>do :Dox<cr>
 Plugin 'vimwiki/vimwiki'
 let g:vimwiki_autowriteall=1
 
-"=====  plugin YouCompleteMe and ultisnips ====
+"========================================
+"=====  @YouCompleteMe and @ultisnips ====
+"========================================
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'rdnetto/YCM-Generator'
 Plugin 'rhysd/vim-clang-format'
+
+" map to <Leader>cf in C++ code
+autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
+
+"于是乎我的折腾思路调整为
+"安装引擎 SirVer/ultisnips
+"安装代码块集合 honza/vim-snippets
+"添加自定义代码块，把优先级调高，覆盖掉 honza/vim-snippets 中不满意的代码片段。
+"
+"" Track the engine.
 Plugin 'SirVer/ultisnips'
+
+" Snippets are separated from the engine. Add this if you want them:
 Plugin 'honza/vim-snippets'
+
 
 " 开启 YCM 标签补全引擎
 let g:ycm_collect_identifiers_from_tags_files=0
@@ -419,6 +513,21 @@ let g:ycm_semantic_triggers =  {
 			\ 'cs,lua,javascript': ['re!\w{2}'],
 			\ }
 
+"let g:ycm_semantic_triggers =  {
+" \   'c' : ['->', '.', 're!\w{2}'],
+" \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+" \             're!\[.*\]\s'],
+" \   'ocaml' : ['.', '#'],
+" \   'cpp,objcpp' : ['->', '.', '::'],
+" \   'perl' : ['->'],
+" \   'php' : ['->', '::'],
+" \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+" \   'ruby' : ['.', '::'],
+" \   'lua' : ['.', ':'],
+" \   'erlang' : [':'],
+" \ }
+
+
 let g:ycm_filetype_whitelist = {
 			\ "c":1,
 			\ "cpp":1,
@@ -431,8 +540,10 @@ let g:ycm_filetype_whitelist = {
 
 let g:ycm_seed_identifiers_with_syntax=1
 
-let g:ycm_server_python_interpreter='/usr/bin/python'
+"let g:ycm_server_python_interpreter='/usr/bin/python'
 "let g:ycm_server_python_interpreter='/Users/jack/.pyenv/shims/python'
+"let g:ycm_server_python_interpreter='/usr/local/bin/python3'
+
 let g:ycm_global_ycm_extra_conf='~/.vim/.ycm_extra_conf.py'
 
 "===============================
@@ -444,7 +555,7 @@ let g:echodoc_enable_at_startup = 1
 
 
 "===============================
-"use another snipmate:ultisnips
+"use another snipmate:@ultisnips
 "===============================
 "Plugin 'SirVer/ultisnips'
 
@@ -457,7 +568,7 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 "let g:UltiSnipsEditSplit="vertical"
 
 "========================
-" outline: for object-c
+" @outline: for object-c
 "========================
 Plugin 'shougo/unite.vim'
 Plugin 'shougo/unite-outline'
@@ -471,6 +582,12 @@ nnoremap <leader>oo :Unite outline<cr>
 " for object-c
 "========================
 Plugin 'msanders/cocoa.vim'
+
+"====================
+" @swift... for swift
+"====================
+"Plugin 'keith/swift.vim'
+Plugin 'jph00/swift-apple'
 
 "Methods for the current file can be listed and navigated to with 
 "the |:ListMethods| command.
@@ -593,8 +710,8 @@ nmap ,wr :RecurGrepFast <cword><CR>
 if &term =~? 'mlterm\|xterm\|xterm-256\|screen-256'
 	let &t_Co = 256
    " colorscheme py-darcula
-    colorscheme molokai
-   "colorscheme space-vim-dark
+   " colorscheme molokai
+   colorscheme space-vim-dark
 else
     colorscheme delek
 endif
@@ -637,7 +754,7 @@ endif
 " Plugins settings and mappings
 " Edit them as you wish.
 
-" Tagbar ----------------------------- 
+" @Tagbar ----------------------------- 
 
 " toggle tagbar display
 map <F4> :TagbarToggle<CR>
@@ -646,7 +763,7 @@ let g:tagbar_autofocus = 1
 let g:tagbar_ctags_bin='/usr/local/bin/ctags'
 let g:tagbar_width = 20
 
-" NERDTree ----------------------------- 
+" @NERDTree ----------------------------- 
 
 " toggle nerdtree display
 map <F3> :NERDTreeToggle<CR>
@@ -734,6 +851,9 @@ let g:syntastic_check_on_open = 1
 " If you don't need write JSX, you can use jshint.
 " And eslint is slow, but not a hindrance
 " let g:syntastic_javascript_checkers = ['jshint']
+let g:syntastic_cpp_cpplint_exec = 'cpplint'
+let g:syntastic_cpp_checkers = ['cpplint']
+
 let g:syntastic_javascript_checkers = ['eslint']
 " don't put icons on the sign column (it hides the vcs status icons of signify)
 let g:syntastic_enable_signs = 0
@@ -771,7 +891,7 @@ let g:syntastic_style_warning_symbol = '⚠'
 " Fix to let ESC work as espected with Autoclose plugin
 "let g:AutoClosePumvisible = {"ENTER": "", "ESC": ""}
 
-" Signify ------------------------------
+" @Signify ------------------------------
 
 " this first setting decides in which order try to guess your current vcs
 " UPDATE it to reflect your preferences, it will speed up opening files
@@ -787,15 +907,22 @@ highlight SignifySignAdd    cterm=bold ctermbg=237  ctermfg=119
 highlight SignifySignDelete cterm=bold ctermbg=237  ctermfg=167
 highlight SignifySignChange cterm=bold ctermbg=237  ctermfg=227
 
-" Window Chooser ------------------------------
+" @Window Chooser ------------------------------
 
 " mapping
 nmap  -  <Plug>(choosewin)
 " show big letters
 let g:choosewin_overlay_enable = 1
 
-" Airline ------------------------------
+"---------------------------------------
+" -  @Airline -
+" 常用快捷键
 
+" ]b / [b       : 切换buffer
+" <Leader>1~9   : 切换至对应 num 的buffer
+" Ctrl + X      : 关闭当前 buffer
+"---------------------------------------
+"
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'bubblegum'
 let g:airline#extensions#tabline#enabled = 1
@@ -831,8 +958,24 @@ let g:airline_symbols.linenr = ''
 
 
  "设置切换Buffer快捷键"
-"  nnoremap <C-N> :bn<CR>
-"  nnoremap <C-P> :bp<CR> 
+ nnoremap [b :bn<CR>
+ nnoremap ]b :bp<CR> 
+
+ " 关闭当前 buffer
+noremap <C-x> :w<CR>:bd<CR>
+
+
+" <leader>1~9 切到 buffer1~9
+map <leader>1 :b 1<CR>
+map <leader>2 :b 2<CR>
+map <leader>3 :b 3<CR>
+map <leader>4 :b 4<CR>
+map <leader>5 :b 5<CR>
+map <leader>6 :b 6<CR>
+map <leader>7 :b 7<CR>
+map <leader>8 :b 8<CR>
+map <leader>9 :b 9<CR>
+
 
 " Tab navigation like Firefox.
 "nnoremap <C-S-Tab> :bprevious<CR>
@@ -948,7 +1091,7 @@ set tags=./.tags;,.tags
 
 
 "===================================
-" gtags config.
+" @gtags config.
 "===================================
 "vimrc 中设置环境变量启用 pygments
 "let $GTAGSLABEL = 'native-pygments'
@@ -1040,15 +1183,22 @@ hi cFunctions gui=NONE cterm=bold  ctermfg=blue
  
 
 "vim copy to cliper board
+"Under Windows, the * and + registers are equivalent. For X11 systems,
+" though, they differ. For X11 systems, * is the selection, 
+" and + is the cut buffer (like clipboard).
+" the * register for macos is oK.
 
-"----:"+y    复制到系统剪贴板  
-"----:"+p    粘贴  
-"----:"+gp  粘贴并且移动光标到粘贴内容后  
-"nmap <C-c>  "+y
-"nmap <C-v>  "+gp"
-"nmap <silent> <leader>c :"+y<cr>
-"nmap <silent> <leader>v :"+gp<cr>
-"
+"----"*y    复制到系统剪贴板  
+"----"*p    粘贴  
+"----"*gp  粘贴并且移动光标到粘贴内容后  
+vmap <C-c>  "*y
+" <C-v> 热键是Visual Block可视化块的热键,不能使用
+"nmap <C-v>  "*p
+
+"下面的快捷键，不能加冒号, :冒号代码，命令行执行模式
+vmap <silent> <leader>c "*y
+nmap <silent> <leader>v "*p
+
 
 
 "用ctags搜索代码时, 用 ctrl + ] 后，只有一个匹配项直接跳转，有多个则列出所有匹配项选择跳转
@@ -1177,7 +1327,7 @@ nmap <C-\>a :cs find a <C-R>=expand("<cword>")<CR><CR>
 "  <TAB> is used by YouCompleteme.
 "=================================
 
-"================fzf 工具==============
+"================@fzf 工具==============
 "插件主要对 fzf 集成绑定了一些和 vim 相关的功能，比如：
 "查找当前 Buffer、Tag、Marks。甚至切换 window,
 "更换 vim 主题配色Colors, Rg查询, Lines, BLines,
@@ -1192,6 +1342,9 @@ let g:fzf_command_prefix = 'Fzf'
 
 "因为ripgrep是目前性能最好的文本内容搜索工具，所以我们可以自己定义一个命令
 
+"   :Rg  - Start fzf with hidden preview window that can be enabled with "?" key
+"   :Rg! - Start fzf in fullscreen and display the preview window above
+
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
@@ -1200,7 +1353,7 @@ command! -bang -nargs=* Rg
   \   <bang>0)
 
 "======================
-"缩进指示线配置(代码编辑)
+"@代码缩进指示线配置(代码编辑)
 "=====================
 let g:indentLine_char='┆'
 let g:indentLine_enabled = 1
@@ -1218,3 +1371,116 @@ map <C-i> :IndentLinesToggle<CR>
 "vmap "+y :w !pbcopy<CR><CR>
 "nmap "+p :r !pbpaste<CR><CR>
 
+"======================
+"@代码折叠配置(代码编辑)
+"
+"设置代码折叠模式为indent，syntax后
+"
+" zo: 打开折叠
+" zc: 关闭折叠
+"
+" zM: 打开所有的折叠
+" zR: 关闭所有的折叠
+"=====================
+"如果是写程序，可以按语法(syntax)折叠，或者按缩进(indent)折叠。
+"1.方法是 :set foldmethod=syntax 或者是其它方法。
+"2.设置好了之后可以用 zM 和 zR 来打开或关闭所有的折叠。zM// folds M-ore.  zR// R-educe the folding.
+"3.:h fold-commands 可以用来查看有关折叠的命令，
+"4.所有的折叠命令全部由 z 开关。比如 zo 和 zc 用来打来和关闭折叠（助记符是 open 和 close）。
+nmap <leader>zi :set fdm=indent<CR>
+nmap <leader>zs :set fdm=syntax<CR>
+
+
+"=====================
+" @代码对齐（tabular）
+" Plugin 'godlygeek/tabular'
+"=====================
+" 常用命令:
+":Tabularize /,     	逗号（,）对齐，逗号分割的各部分左对齐，逗号两边添加至少 1 个空格
+":Tabularize /,/r1	    逗号（,）对齐，逗号分割的各部分右对齐，逗号两边添加至少 1 个空格, rn: 则为逗号两边添加至少n个空格
+":Tabularize /,/l1	    逗号（,）对齐，逗号分割的各部分左对齐，逗号两边添加至少 1 个空格
+":Tabularize /,/c1	    逗号（,）对齐，逗号分割的各部分中心对齐，逗号两边添加至少 1 个空格
+":Tabularize /,/r1c1l0	逗号（,）对齐，第一个逗号前的文本右对齐，添加 1 个空格；逗号居中对齐，添加 1 个空格；逗号后的文本左对齐，不添加空格
+":Tabularize /^[^,]*\zs,/r0c0l0	第一个逗号（,）对齐，第一个逗号前的文本右对齐，第一个逗号后的所有文本左对齐
+"
+
+":Tab /=    以等号对齐，
+":Tab /:    以冒号对齐，
+nmap <leader>a= :Tabularize /=<CR>  
+vmap <leader>a= :Tabularize /=<CR>
+nmap <leader>a: :Tabularize /:\zs<CR>
+vmap <leader>a: :Tabularize /:\zs<CR>
+
+"=====================
+" @代码- 快速添加/删除注释
+" Plugin 'scrooloose/nerdcommenter'
+"<leader> == Ctrl-\ : 需要修改nerdcommenter.vim
+"=====================
+let g:NERDSpaceDelims            = 1                                    " 在注释符号后加一个空格
+let g:NERDCompactSexyComs        = 1                                    " 紧凑排布多行注释
+let g:NERDDefaultAlign           = 'left'                               " 逐行注释左对齐
+let g:NERDAltDelims_java         = 1                                    " JAVA 语言使用默认的注释符号
+let g:NERDCustomDelimiters       = {'c': {'left': '/*', 'right': '*/'}} " C 语言注释符号
+let g:NERDCommentEmptyLines      = 1                                    " 允许空行注释
+let g:NERDTrimTrailingWhitespace = 1                                    " 取消注释时删除行尾空格
+let g:NERDToggleCheckAllLines    = 1                                    " 检查选中的行操作是否成功
+"原文链接：https://blog.csdn.net/bc516125634/article/details/88858097
+
+"注释常用快捷键(注意，可能有冲突)
+"<leader> == Ctrl-\
+
+"[count]<leader>cc          注释当前行起始的 [count]行 或者 注释 visual mode 选中的文本
+
+"[count]<leader>cn	        注释方式同 <leader>cc，但是强制嵌套
+
+"[count]<leader>c<space>    切换所选行的注释状态。 如果注释了最上面的选定行，则取消注释所有选定行，反之亦然。
+
+"[count]<leader>cm	        使用一组多行注释符注释选定行
+
+"[count]<leader>ci	        单独切换所选行的各行注释状态
+
+"[count]<leader>cs	        使用块格式布局注释掉选定的行。
+
+"<leader>c$	                注释从光标到行尾的当前行。
+
+"<leader>cA                 在行尾添加注释，并切换至插入模式，光标停留在注释符中间
+
+"[count]<leader>cl
+"[count]<leader>cb          "注释方式同 <leader>cc，注释符左对齐（<leader>cl）或者两边对齐（<leader>cb）
+"
+"[count]<leader>cu	        取消选定行的注释
+
+
+""""""""""""" key map timeouts  组合键超时设置长些
+    "
+    " By default Vim will only wait 1 second for each keystroke in a mapping.
+    " You may find that too short with the above typemaps.  If so, you should
+    " either turn off mapping timeouts via 'notimeout'.
+    "
+    "set notimeout
+    "
+    " Or, you can keep timeouts, by uncommenting the timeoutlen line below,
+    " with your own personal favorite value (in milliseconds):
+    "
+    set timeoutlen=2000
+    "
+    " Either way, since mapping timeout settings by default also set the
+    " timeouts for multicharacter 'keys codes' (like <F1>), you should also
+    " set ttimeout and ttimeoutlen: otherwise, you will experience strange
+    " delays as vim waits for a keystroke after you hit ESC (it will be
+    " waiting to see if the ESC is actually part of a key code like <F1>).
+    "
+    set ttimeout
+    "
+    " personally, I find a tenth of a second to work well for key code
+    " timeouts. If you experience problems and have a slow terminal or network
+    " connection, set it higher.  If you don't set ttimeoutlen, the value for
+    " timeoutlent (default: 1000 = 1 second, which is sluggish) is used.
+    "
+    set ttimeoutlen=100
+
+"====================
+"
+" cheat , cppman 多多使用
+"
+"===================

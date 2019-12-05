@@ -150,6 +150,21 @@ Plugin 'tao12345666333/vim-vue'
 
 """""""" c/c++ jump support 
 "header/source jump
+"A few of quick commands to swtich between source files and header files quickly.
+":A switches to the header file corresponding to the current file being edited (or vise versa)
+":AS splits and switches
+":AV vertical splits and switches
+":AT new tab and switches
+":AN cycles through matches
+":IH switches to file under cursor
+":IHS splits and switches
+":IHV vertical splits and switches
+":IHT new tab and switches
+":IHN cycles through matches
+"<Leader>ih switches to file under cursor
+"<Leader>is switches to the alternate file of file under cursor (e.g. on  <foo.h> switches to foo.cpp)
+"<Leader>ihn cycles through matches
+"
 "c complete.
 Plugin 'a.vim'
 Plugin 'c.vim'
@@ -415,6 +430,7 @@ nmap at :ALEToggle<CR>
 
 "=======cppman for vim =======
 "Plugin for use of cppman ("C++ 98/11/14 manual pages for Linux/MacOS" ) from within Vim
+"Move the cursor to the keyword and hit K to lookup the keyword in a new buffer.
 "=============================
 Plugin 'gauteh/vim-cppman'
 
@@ -461,6 +477,10 @@ let g:vimwiki_autowriteall=1
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'rdnetto/YCM-Generator'
 Plugin 'rhysd/vim-clang-format'
+
+" map to <Leader>cf in C++ code
+autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
 "于是乎我的折腾思路调整为
 "安装引擎 SirVer/ultisnips
@@ -1166,14 +1186,18 @@ hi cFunctions gui=NONE cterm=bold  ctermfg=blue
 "Under Windows, the * and + registers are equivalent. For X11 systems,
 " though, they differ. For X11 systems, * is the selection, 
 " and + is the cut buffer (like clipboard).
+" the * register for macos is oK.
 
-"----:"*y    复制到系统剪贴板  
-"----:"*p    粘贴  
-"----:"*gp  粘贴并且移动光标到粘贴内容后  
+"----"*y    复制到系统剪贴板  
+"----"*p    粘贴  
+"----"*gp  粘贴并且移动光标到粘贴内容后  
 vmap <C-c>  "*y
-nmap <C-v>  "*p"
-"vmap <silent> <leader>c :"*y<cr>
-"nmap <silent> <leader>v :"*gp<cr>
+" <C-v> 热键是Visual Block可视化块的热键,不能使用
+"nmap <C-v>  "*p
+
+"下面的快捷键，不能加冒号, :冒号代码，命令行执行模式
+vmap <silent> <leader>c "*y
+nmap <silent> <leader>v "*p
 
 
 
