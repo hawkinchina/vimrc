@@ -998,7 +998,7 @@ function! SetTitle()
 
     elseif &filetype == 'python'
         call setline(1,"#!/usr/bin/env python")
-        call append(line("."),"# coding=utf-8")
+        call append(line("."),"# -*- coding: utf-8 -*-"")
 	    call append(line(".")+1, "") 
 
     elseif &filetype == 'ruby'
@@ -1484,3 +1484,22 @@ let g:NERDToggleCheckAllLines    = 1                                    " 检查
 " cheat , cppman 多多使用
 "
 "===================
+"
+"
+
+
+"""""""""""""""""sdcv set""""""""""""""""""
+"Vim 添加英文字典
+""""""""""""""""""""""""""""""""""""""""""""
+function! Mydict()
+  let expl=system('sdcv -n ' .
+        \  expand("<cword>"))
+  windo if
+        \ expand("%")=="diCt-tmp" |
+        \ q!|endif
+  rightbelow 30vsp diCt-tmp
+  setlocal buftype=nofile bufhidden=hide noswapfile
+  1s/^/\=expl/
+  1
+endfunction
+nmap <C-w> :call Mydict()<CR>
