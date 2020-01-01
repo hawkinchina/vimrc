@@ -986,11 +986,9 @@ set backupdir=~/.vim/dirs/backups " where to put backup files
 set undofile                      " persistent undos - undo after you re-open the file
 set undodir=~/.vim/dirs/undos
 "set viminfo+=n~/.vim/dirs/viminfo
-
-if has('nvim')
-    set viminfo+=n~/.vim/dirs/viminfo2
-else
-    set viminfo+=n~/.vim/dirs/viminfo3
+"vim use viminfo file, nvim donot use it. it use ShaDa.
+if !has('nvim')
+    set viminfo+=n~/.vim/dirs/viminfo
 endif
 
 " store yankring history file there too
@@ -1453,7 +1451,10 @@ vmap <C-c>  "*y
 " iterm2 map: comand+c to the following keys.
 " comand + c:  copy to @cliper board
 "
-vnoremap <ESC>]{1}c~ "*y
+"vnoremap <ESC>]{1}c~ "*y
+"目前，此因素vim可以，但是neovim不行;
+"iterm2: send Text with vim特殊字符串："*y
+"
 
 "<C-v> 热键是Visual Block可视化块的热键,不能使用
 "nmap <C-v>  "*p
